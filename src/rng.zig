@@ -8,15 +8,13 @@ fn _Rng(comptime T: type) type {
     beg: T,
     end: T,
 
-    pub fn next(self: *@This()) ?T { return move(self, 1); }
-
-    pub fn move(self: *@This(), dist: usize) ?T {
+    pub fn next(self: *@This()) ?T {
       if (self.beg == self.end) { return null; }
       if (self.asc) {
-        defer self.beg += @min(self.end - self.beg, dist);
+        defer self.beg += 1;
         return self.beg;
       } else {
-        defer self.beg -= @min(self.beg - self.end, dist);
+        defer self.beg -= 1;
         return self.beg - 1;
       }
     }
