@@ -1,22 +1,23 @@
-pub fn Rng(comptime T: type, beg: T, end: T) _Rng(T) {
-  return .{ .asc = beg < end, .beg = beg, .end = end };
+pub fn Rng(comptime T: type, left: T, right: T) _Rng(T) {
+  if (left > right) unreachable;
+  return .{ .left = left, .right = right };
 }
 
 fn _Rng(comptime T: type) type {
   return struct {
-    asc: bool,
-    beg: T,
-    end: T,
+    left: T,
+    right: T,
 
     pub fn next(self: *@This()) ?T {
-      if (self.beg == self.end) { return null; }
-      if (self.asc) {
-        defer self.beg += 1;
-        return self.beg;
-      } else {
-        defer self.beg -= 1;
-        return self.beg - 1;
-      }
+      if (self.left == self.right) { return null; }
+      defer self.left += 1;
+      return self.left;
+    }
+
+    pub fn prev(self: *@This()) ?T {
+      if (self.left == self.right) { return null; }
+      defer self.right -= 1;
+      return self.right - 1;
     }
   };
 }
