@@ -1,36 +1,36 @@
 const std = @import("std");
 
-var buffered_reader = std.io.bufferedReader(std.io.getStdIn().reader());
-var buffered_writer = std.io.bufferedWriter(std.io.getStdOut().writer());
-const reader = buffered_reader.reader();
-const writer = buffered_writer.writer();
-
-pub fn scan(comptime T: type) T {
-  return Scanner.next(T) catch unreachable;
-}
-pub fn print(comptime format: []const u8, args: anytype) void {
-  writer.print(format, args) catch unreachable;
-}
-
-const Scanner = struct {
-  var buf: [1 << 24]u8 = undefined;
-  var len: usize = undefined;
-  var cur: usize = 0;
-
-  pub fn scanInput() !void { len = try reader.read(buf[0 .. ]); }
-  fn nextItem() []const u8 {
-    while (cur < len and std.ascii.isWhitespace(buf[cur])) { cur += 1; }
-    const l = cur;
-    while (cur < len and !std.ascii.isWhitespace(buf[cur])) { cur += 1; }
-    return buf[l .. cur];
+pub fn scan(comptime T: type) ?T {
+  const stdin = std.io.getStdIn().reader();
+  const static = struct {
+    var buf: [1 << 12]u8 = undefined; // [.... ..][.. ....] -> ?
+    var len: usize = 0;
+    var cur: usize = 0;
+  };
+  // var str: Str = .{};
+  if (static.cur == static.len) {
+    static.cur = 0;
+    static.len = stdin.read(static.buf[0 .. ]) catch @panic("error: scan()");
+    if (static.cur == static.len) { return null; }
   }
-  pub fn next(comptime T: type) !T {
-    const info = @typeInfo(T);
-    return switch (info) {
-      .int => try std.fmt.parseInt(T, nextItem(), 10),
-      .float => try std.fmt.parseFloat(T, nextItem()),
-      .pointer => if (info.pointer.child == u8) (nextItem()) else (error.NotSupportedType),
-      else => error.NotSupportedType,
-    };
-  }
-};
+
+  // static.cur = std.mem.indexOfNone(
+  //     u8, static.buf[static.cur .. static.len], " \t\n\r") orelse static.len;
+  // const l = static.cur;
+  // static.cur = std.mem.indexOfAny(
+  //     u8, static.buf[static.cur .. static.len], " \t\n\r") orelse static.len;
+  // static.buf[l .. static.cur];
+  //
+  // const info = @typeInfo(T);
+  // return switch (info) {
+  //   .int => std.fmt.parseInt(T, nextWord(self), 10) catch unreachable,
+  //   .float => std.fmt.parseFloat(T, nextWord(self)) catch unreachable,
+  //   .pointer => if (info.pointer.child == u8) (nextWord(self)) else (unreachable),
+  //   else => unreachable,
+  // };
+}
+
+pub fn print(comptime fmt: []const u8, args: anytype) void {
+  const stdout = std.io.getStdOut().writer();
+  stdout.print(fmt, args) catch @panic("error: print()");
+}
