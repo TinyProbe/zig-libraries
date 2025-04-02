@@ -7,13 +7,15 @@ fn _Rng(comptime T: type) type {
     left: T,
     right: T,
 
-    pub fn next(self: *@This()) ?T {
+    pub const Self = @This();
+
+    pub fn next(self: *Self) ?T {
       if (self.left >= self.right) { return null; }
       defer self.left += 1;
       return self.left;
     }
 
-    pub fn prev(self: *@This()) ?T {
+    pub fn prev(self: *Self) ?T {
       if (self.left >= self.right) { return null; }
       defer self.right -= 1;
       return self.right - 1;

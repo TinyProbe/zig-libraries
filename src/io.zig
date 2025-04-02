@@ -7,7 +7,7 @@ pub fn scan(comptime T: type) ?T {
     var len: usize = 0;
     var cur: usize = 0;
   };
-  // var str: Str = .{};
+  // var str = Str(alloc); defer str._Str();
   if (static.cur == static.len) {
     static.cur = 0;
     static.len = stdin.read(static.buf[0 .. ]) catch @panic("error: scan()");
