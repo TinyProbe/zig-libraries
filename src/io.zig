@@ -1,36 +1,47 @@
 const std = @import("std");
+const str = @import("./str.zig");
+const Str = str.Str;
+const Rng = @import("./rng.zig").Rng;
 
-pub fn scan(comptime T: type) ?T {
-  const stdin = std.io.getStdIn().reader();
+var gpa = std.heap.GeneralPurposeAllocator(.{}) {};
+const alloc = gpa.allocator();
+
+fn readByte() ?u8 {
+  const reader = std.io.getStdIn().reader();
   const static = struct {
-    var buf: [1 << 12]u8 = undefined; // [.... ..][.. ....] -> ?
+    const bufLen = 1 << 12;
+    var buf: [bufLen]u8 = undefined;
     var len: usize = 0;
     var cur: usize = 0;
   };
-  // var str = Str(alloc); defer str._Str();
   if (static.cur == static.len) {
     static.cur = 0;
-    static.len = stdin.read(static.buf[0 .. ]) catch @panic("error: scan()");
+    static.len = reader.read(static.buf[0 .. static.bufferSize]) catch {
+      @panic("readByte(): Error");
+    };
     if (static.cur == static.len) { return null; }
   }
+  defer static.cur += 1;
+  return static.buf[static.cur];
+}
 
-  // static.cur = std.mem.indexOfNone(
-  //     u8, static.buf[static.cur .. static.len], " \t\n\r") orelse static.len;
-  // const l = static.cur;
-  // static.cur = std.mem.indexOfAny(
-  //     u8, static.buf[static.cur .. static.len], " \t\n\r") orelse static.len;
-  // static.buf[l .. static.cur];
-  //
-  // const info = @typeInfo(T);
-  // return switch (info) {
-  //   .int => std.fmt.parseInt(T, nextWord(self), 10) catch unreachable,
-  //   .float => std.fmt.parseFloat(T, nextWord(self)) catch unreachable,
-  //   .pointer => if (info.pointer.child == u8) (nextWord(self)) else (unreachable),
-  //   else => unreachable,
-  // };
+pub fn scan(comptime T: type) ?T {
+  var s = Str.init(alloc);
+  while (readByte()) |byte| {
+    if (!std.ascii.isWhitespace(byte)) {
+      s.push(byte); break;
+    }
+  }
+  while (readByte()) |byte| {
+    if (std.ascii.isWhitespace(byte)) { break; }
+    s.push(byte);
+  }
+  if (T == Str) { return s; }
+  defer s.deinit();
+  str.parse(T, &s);
 }
 
 pub fn print(comptime fmt: []const u8, args: anytype) void {
-  const stdout = std.io.getStdOut().writer();
-  stdout.print(fmt, args) catch @panic("error: print()");
+  const writer = std.io.getStdOut().writer();
+  writer.print(fmt, args) catch @panic("print(): Error");
 }

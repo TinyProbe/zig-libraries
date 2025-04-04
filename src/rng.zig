@@ -9,9 +9,9 @@ pub fn Rng(comptime T: type) type {
       if (@typeInfo(T) == .pointer) {
         const l: usize = @intFromPtr(left);
         const r: usize = @intFromPtr(right);
-        if (l > r) { @panic("Rng.init(): left > right"); }
-      } else {
-        if (left > right) { @panic("Rng.init(): left > right"); }
+        if (l > r) { @panic("Rng(T).init(): left > right"); }
+      } else if (left > right) {
+        @panic("Rng(T).init(): left > right");
       }
       return .{ .left = left, .right = right };
     }
