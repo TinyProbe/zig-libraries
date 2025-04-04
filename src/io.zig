@@ -16,7 +16,7 @@ fn readByte() ?u8 {
   };
   if (static.cur == static.len) {
     static.cur = 0;
-    static.len = reader.read(static.buf[0 .. static.bufferSize]) catch {
+    static.len = reader.read(static.buf[0 .. static.buf.len]) catch {
       @panic("readByte(): Error");
     };
     if (static.cur == static.len) { return null; }
@@ -25,20 +25,21 @@ fn readByte() ?u8 {
   return static.buf[static.cur];
 }
 
-pub fn scan(comptime T: type) ?T {
+pub fn scan(comptime T: type) T {
   var s = Str.init(alloc);
   while (readByte()) |byte| {
     if (!std.ascii.isWhitespace(byte)) {
-      s.push(byte); break;
+      s.push(byte) catch @panic("scan(): s.push(byte): Error");
+      break;
     }
   }
   while (readByte()) |byte| {
     if (std.ascii.isWhitespace(byte)) { break; }
-    s.push(byte);
+    s.push(byte) catch @panic("scan(): s.push(byte): Error");
   }
   if (T == Str) { return s; }
   defer s.deinit();
-  str.parse(T, &s);
+  return str.parse(T, &s) catch @panic("scan(): str.parse(T, &s): Error");
 }
 
 pub fn print(comptime fmt: []const u8, args: anytype) void {
