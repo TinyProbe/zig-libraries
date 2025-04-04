@@ -4,7 +4,7 @@ const Rng = @import("rng.zig").Rng;
 
 pub const Str = @import("./vec.zig").Vec(u8);
 
-pub fn compare(lhs: *const Str, rhs: *const Str) i32 {
+pub fn compare(lhs: Str, rhs: Str) i32 {
   return compareSlice(lhs.data(), rhs.data());
 }
 
@@ -17,7 +17,7 @@ pub fn compareSlice(lhs: []const u8, rhs: []const u8) i32 {
   return @intCast(stdc.strcmp(@ptrCast(lhs), @ptrCast(rhs)));
 }
 
-pub fn parse(comptime T: type, str: *const Str) !T {
+pub fn parse(comptime T: type, str: Str) !T {
   return parseSlice(T, str.data());
 }
 
