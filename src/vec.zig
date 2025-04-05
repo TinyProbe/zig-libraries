@@ -55,8 +55,8 @@ pub fn Vec(comptime T: type) type {
         const n = self.arrayList.items.len;
         try self.arrayList.resize(n + n);
         const items = self.arrayList.items;
-        std.mem.copyBackwards(
-            T, items[pos + n .. items.len], items[pos .. items.len - n]);
+        std.mem.copyBackwards(T, items[pos + n .. items.len],
+                              items[pos .. items.len - n]);
         @memcpy(items[pos .. pos + pos], items[0 .. pos]);
         @memcpy(items[pos + pos .. pos + n], items[pos + n .. items.len]);
       } else {
@@ -95,8 +95,8 @@ pub fn Vec(comptime T: type) type {
                         pos: usize, n: usize, item: T) Allocator.Error!void {
       try self.arrayList.resize(self.arrayList.items.len + n);
       const items = self.arrayList.items;
-      std.mem.copyBackwards(
-          T, items[pos + n .. items.len], items[pos .. items.len - n]);
+      std.mem.copyBackwards(T, items[pos + n .. items.len],
+                            items[pos .. items.len - n]);
       @memset(items[pos .. pos + n], item);
     }
 
@@ -224,8 +224,8 @@ pub fn Vec(comptime T: type) type {
     pub fn removeRange(self: *Self, left: usize, right: usize) void {
       const items = self.arrayList.items;
       const dist = right - left;
-      std.mem.copyForwards(
-          T, items[left .. items.len - dist], items[right .. items.len]);
+      std.mem.copyForwards(T, items[left .. items.len - dist],
+                           items[right .. items.len]);
       self.arrayList.resize(items.len - dist) catch unreachable;
     }
 

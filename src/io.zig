@@ -29,17 +29,17 @@ pub fn scan(comptime T: type) T {
   var s = Str.init(alloc);
   while (readByte()) |byte| {
     if (!std.ascii.isWhitespace(byte)) {
-      s.push(byte) catch @panic("scan(): s.push(byte): Error");
+      s.push(byte) catch @panic("scan(): s.push(): Error");
       break;
     }
   }
   while (readByte()) |byte| {
     if (std.ascii.isWhitespace(byte)) { break; }
-    s.push(byte) catch @panic("scan(): s.push(byte): Error");
+    s.push(byte) catch @panic("scan(): s.push(): Error");
   }
   if (T == Str) { return s; }
   defer s.deinit();
-  return str.parse(T, &s) catch @panic("scan(): str.parse(T, &s): Error");
+  return str.parse(T, s) catch @panic("scan(): str.parse(): Error");
 }
 
 pub fn print(comptime fmt: []const u8, args: anytype) void {
