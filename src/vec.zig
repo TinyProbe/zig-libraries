@@ -64,31 +64,29 @@ pub fn Vec(comptime T: type) type {
       }
     }
 
-    // need refactorying
     pub fn insertSlice(self: *Self,
                        pos: usize, slice: []const T) Allocator.Error!void {
-      const pos_l: usize = @intFromPtr(self.arrayList.items.ptr + pos);
-      const slice_l: usize = @intFromPtr(slice.ptr);
-      const slice_r: usize = @intFromPtr(slice.ptr + slice.len);
-      const pos_ri = pos + slice.len;
-      if (!isOverlaped(self.arrayList.items, slice) or pos_l >= slice_r) {
+      const n = slice.len;
+      const pos_r = pos + n;
+      if (!isOverlaped(self.arrayList.items, slice) or
+          @as(usize, @intFromPtr(self.arrayList.items.ptr + pos)) >=
+          @as(usize, @intFromPtr(slice.ptr + n))) {
         try self.arrayList.insertSlice(pos, slice);
       } else {
-        try self.arrayList.resize(self.arrayList.items.len + slice.len);
+        try self.arrayList.resize(self.arrayList.items.len + n);
         const items = self.arrayList.items;
-        std.mem.copyBackwards(T, items[pos_ri .. items.len],
-                              items[pos .. items.len - slice.len]);
-        if (pos_l > slice_l) {
-          const slice_li = slice.ptr - items.ptr;
-          const l_len = pos - slice_li;
-          const r_len = slice.len - l_len;
-          @memcpy(items[pos .. pos + l_len], items[slice_li .. pos]);
-          @memcpy(items[pos + l_len .. pos_ri],
-                  items[pos_ri .. pos_ri + r_len]);
+        std.mem.copyBackwards(T, items[pos_r .. items.len],
+                              items[pos .. items.len - n]);
+        if (@as(usize, @intFromPtr(self.arrayList.items.ptr + pos)) >
+            @as(usize, @intFromPtr(slice.ptr))) {
+          const slice_l = slice.ptr - items.ptr;
+          const l_len = pos - slice_l;
+          const r_len = n - l_len;
+          @memcpy(items[pos .. pos + l_len], items[slice_l .. pos]);
+          @memcpy(items[pos + l_len .. pos_r], items[pos_r .. pos_r + r_len]);
         } else {
-          const slice_li = slice.ptr - items.ptr + slice.len;
-          @memcpy(items[pos .. pos_ri],
-                  items[slice_li .. slice_li + slice.len]);
+          const slice_l = slice.ptr - items.ptr + n;
+          @memcpy(items[pos .. pos_r], items[slice_l .. slice_l + n]);
         }
       }
     }

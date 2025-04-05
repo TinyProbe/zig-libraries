@@ -6,12 +6,13 @@ pub fn Rng(comptime T: type) type {
     pub const Self = @This();
 
     pub fn init(left: T, right: T) Self {
-      if (@typeInfo(T) == .pointer) {
-        const l: usize = @intFromPtr(left);
-        const r: usize = @intFromPtr(right);
-        if (l > r) { @panic("Rng(T).init(): left > right"); }
-      } else if (left > right) {
-        @panic("Rng(T).init(): left > right");
+      switch (@typeInfo(T)) {
+        .pointer =>
+            if (@as(usize, @intFromPtr(left)) >
+                @as(usize, @intFromPtr(right)))
+              @panic("Rng(T).init(): left > right"),
+        .int => if (left > right) @panic("Rng(T).init(): left > right"),
+        else => @panic("Rng(T).init(): NotSupportedType"),
       }
       return .{ .left = left, .right = right };
     }
