@@ -9,8 +9,7 @@ const alloc = gpa.allocator();
 fn readByte() ?u8 {
   const reader = std.io.getStdIn().reader();
   const static = struct {
-    const bufLen = 1 << 12;
-    var buf: [bufLen]u8 = undefined;
+    var buf: [1 << 16]u8 = undefined;
     var len: usize = 0;
     var cur: usize = 0;
   };
@@ -29,17 +28,17 @@ pub fn scan(comptime T: type) T {
   var s = Str.init(alloc);
   while (readByte()) |byte| {
     if (!std.ascii.isWhitespace(byte)) {
-      s.push(byte) catch @panic("scan(): s.push(): Error");
+      s.push(byte) catch @panic("scan(): Error");
       break;
     }
   }
   while (readByte()) |byte| {
     if (std.ascii.isWhitespace(byte)) { break; }
-    s.push(byte) catch @panic("scan(): s.push(): Error");
+    s.push(byte) catch @panic("scan(): Error");
   }
   if (T == Str) { return s; }
   defer s.deinit();
-  return str.parse(T, s) catch @panic("scan(): str.parse(): Error");
+  return str.parse(T, s) catch @panic("scan(): Error");
 }
 
 pub fn print(comptime fmt: []const u8, args: anytype) void {
