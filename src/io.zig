@@ -27,10 +27,9 @@ fn readByte() ?u8 {
 pub fn scan(comptime T: type) T {
   var s = Str.init(alloc);
   while (readByte()) |byte| {
-    if (!std.ascii.isWhitespace(byte)) {
-      s.push(byte) catch @panic("scan(): Error");
-      break;
-    }
+    if (std.ascii.isWhitespace(byte)) { continue; }
+    s.push(byte) catch @panic("scan(): Error");
+    break;
   }
   while (readByte()) |byte| {
     if (std.ascii.isWhitespace(byte)) { break; }
@@ -41,7 +40,7 @@ pub fn scan(comptime T: type) T {
   return str.parse(T, s) catch @panic("scan(): Error");
 }
 
-pub fn print(comptime fmt: []const u8, args: anytype) void {
-  const writer = std.io.getStdOut().writer();
-  writer.print(fmt, args) catch @panic("print(): Error");
-}
+// pub fn print(comptime fmt: []const u8, args: anytype) void {
+//   const writer = std.io.getStdOut().writer();
+//   writer.print(fmt, args) catch @panic("print(): Error");
+// }
