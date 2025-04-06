@@ -1,10 +1,13 @@
 const std = @import("std");
 const parseSlice = @import("./str.zig").parseSlice;
 
+var bufferedReader = std.io.BufferedReader(std.io.getStdIn().reader());
+var bufferedWriter = std.io.BufferedWriter(std.io.getStdOut().writer());
+
 fn readByte() ?u8 {
-  const reader = std.io.getStdIn().reader();
+  const reader = bufferedReader.reader();
   const static = struct {
-    var buf: [1 << 16]u8 = undefined;
+    var buf: [1 << 12]u8 = undefined;
     var len: usize = 0;
     var cur: usize = 0;
   };
@@ -40,8 +43,6 @@ pub fn scan(comptime T: type) T {
     @panic("scan(): Error");
   };
 }
-
-var bufferedWriter = std.io.bufferedWriter(std.io.getStdOut().writer());
 
 pub fn print(comptime fmt: []const u8, args: anytype) void {
   const writer = bufferedWriter.writer();
