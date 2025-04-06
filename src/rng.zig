@@ -8,8 +8,7 @@ pub fn Rng(comptime T: type) type {
     pub fn init(left: T, right: T) Self {
       switch (@typeInfo(T)) {
         .pointer =>
-            if (@as(usize, @intFromPtr(left)) >
-                @as(usize, @intFromPtr(right)))
+            if (@as(usize, @intFromPtr(left)) > @as(usize, @intFromPtr(right)))
               @panic("Rng(T).init(): left > right"),
         .int => if (left > right) @panic("Rng(T).init(): left > right"),
         else => @panic("Rng(T).init(): NotSupportedType"),
