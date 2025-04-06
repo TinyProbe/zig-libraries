@@ -44,6 +44,7 @@ pub fn scan(comptime T: type) T {
   };
 }
 
+// need bufferedWriter.flush() explicitly in the execution flow.
 pub fn print(comptime fmt: []const u8, args: anytype) void {
   const writer = bufferedWriter.writer();
   writer.print(fmt, args) catch @panic("print(): Error");

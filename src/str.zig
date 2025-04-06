@@ -1,5 +1,5 @@
 const std = @import("std");
-const stdc = @cImport(@cInclude("string.h")); // need -lc
+const string_h = @cImport(@cInclude("string.h")); // need -lc
 const Rng = @import("rng.zig").Rng;
 
 pub const Str = @import("./vec.zig").Vec(u8);
@@ -14,7 +14,7 @@ pub fn compareRange(lhs: Rng([*]u8), rhs: Rng([*]u8)) i32 {
 }
 
 pub fn compareSlice(lhs: []const u8, rhs: []const u8) i32 {
-  return @intCast(stdc.strcmp(@ptrCast(lhs), @ptrCast(rhs)));
+  return @intCast(string_h.strcmp(@ptrCast(lhs), @ptrCast(rhs)));
 }
 
 pub fn parse(comptime T: type, str: Str) !T {
