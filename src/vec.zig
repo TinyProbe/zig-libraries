@@ -181,7 +181,7 @@ pub fn Vec(comptime T: type) type {
 
         pub fn swapPop(self: *Self, pos: usize) Allocator.Error!?T {
             std.mem.swap(T, &self.items[pos], &self.items[self.items.len - 1]);
-            return self.pop();
+            return try self.pop();
         }
 
         pub fn remove(self: *Self, pos: usize) Allocator.Error!void {
