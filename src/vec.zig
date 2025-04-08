@@ -261,11 +261,11 @@ pub fn Vec(comptime T: type) type {
 
         fn optimizedCapacity(new_len: usize) usize {
             var max_bit: u6 = 0;
-            if (new_len >> (max_bit + (1 << 4)) > 0) { max_bit += (1 << 4); }
-            if (new_len >> (max_bit + (1 << 3)) > 0) { max_bit += (1 << 3); }
-            if (new_len >> (max_bit + (1 << 2)) > 0) { max_bit += (1 << 2); }
-            if (new_len >> (max_bit + (1 << 1)) > 0) { max_bit += (1 << 1); }
-            if (new_len >> (max_bit + (1 << 0)) > 0) { max_bit += (1 << 0); }
+            if (new_len >> (max_bit + (1 << 4)) > 0) { max_bit |= (1 << 4); }
+            if (new_len >> (max_bit + (1 << 3)) > 0) { max_bit |= (1 << 3); }
+            if (new_len >> (max_bit + (1 << 2)) > 0) { max_bit |= (1 << 2); }
+            if (new_len >> (max_bit + (1 << 1)) > 0) { max_bit |= (1 << 1); }
+            if (new_len >> (max_bit + (1 << 0)) > 0) { max_bit |= (1 << 0); }
             return @max(@as(usize, 1) << (max_bit + 1), min_capacity);
         }
 
