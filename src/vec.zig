@@ -252,10 +252,6 @@ pub fn Vec(comptime T: type) type {
             const lhs_r: usize = @intFromPtr(lhs.ptr + lhs.len);
             const rhs_l: usize = @intFromPtr(rhs.ptr);
             const rhs_r: usize = @intFromPtr(rhs.ptr + rhs.len);
-            // const lhs_l: usize = @ptrToInt(lhs.ptr);
-            // const lhs_r: usize = @ptrToInt(lhs.ptr + lhs.len);
-            // const rhs_l: usize = @ptrToInt(rhs.ptr);
-            // const rhs_r: usize = @ptrToInt(rhs.ptr + rhs.len);
             return if (lhs_r <= rhs_l or lhs_l >= rhs_r) (false) else (true);
         }
 
