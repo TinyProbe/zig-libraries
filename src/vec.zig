@@ -176,7 +176,7 @@ pub fn Vec(comptime T: type) type {
         pub fn pop(self: *Self) Allocator.Error!?T {
             if (self.items.len == 0) { return null; }
             try self.resize(self.items.len - 1);
-            return self.items[self.items.len];
+            return self.items.ptr[self.items.len];
         }
 
         pub fn swapPop(self: *Self, pos: usize) Allocator.Error!?T {
