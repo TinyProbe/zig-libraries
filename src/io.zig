@@ -2,7 +2,7 @@ const std = @import("std");
 const parseSlice = @import("./str.zig").parseSlice;
 
 var bufferedReader = std.io.BufferedReader(std.io.getStdIn().reader());
-var bufferedWriter = std.io.BufferedWriter(std.io.getStdOut().writer());
+pub var bufferedWriter = std.io.BufferedWriter(std.io.getStdOut().writer());
 
 fn readByte() ?u8 {
     const reader = bufferedReader.reader();
