@@ -252,7 +252,7 @@ pub fn Vec(comptime T: type) type {
             const lhs_r: usize = @intFromPtr(lhs.ptr + lhs.len);
             const rhs_l: usize = @intFromPtr(rhs.ptr);
             const rhs_r: usize = @intFromPtr(rhs.ptr + rhs.len);
-            return if (lhs_r <= rhs_l or lhs_l >= rhs_r) (false) else (true);
+            return !(lhs_r <= rhs_l or lhs_l >= rhs_r);
         }
 
         fn optimizedCapacity(new_len: usize) usize {
