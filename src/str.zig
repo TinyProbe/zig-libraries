@@ -5,30 +5,30 @@ const Rng = @import("rng.zig").Rng;
 pub const Str = @import("./vec.zig").Vec(u8);
 
 pub fn compare(lhs: Str, rhs: Str) i32 {
-    return compareSlice(lhs.items, rhs.items);
+  return compareSlice(lhs.items, rhs.items);
 }
 
 pub fn compareRange(lhs: Rng([*]u8), rhs: Rng([*]u8)) i32 {
-    return compareSlice(
-            lhs.left[0 .. lhs.right - lhs.left],
-            rhs.left[0 .. rhs.right - rhs.left]);
+  return compareSlice(
+      lhs.left[0 .. lhs.right - lhs.left],
+      rhs.left[0 .. rhs.right - rhs.left]);
 }
 
 pub fn compareSlice(lhs: []const u8, rhs: []const u8) i32 {
-    return @intCast(string_h.strcmp(@ptrCast(lhs), @ptrCast(rhs)));
+  return @intCast(string_h.strcmp(@ptrCast(lhs), @ptrCast(rhs)));
 }
 
 pub fn parse(comptime T: type, str: Str) !T {
-    return parseSlice(T, str.items);
+  return parseSlice(T, str.items);
 }
 
 pub fn parseSlice(comptime T: type, slice: []const u8) !T {
-    if (T == []const u8) {
-        return slice;
-    }
-    return switch (@typeInfo(T)) {
-        .int => try std.fmt.parseInt(T, slice, 10),
-        .float => try std.fmt.parseFloat(T, slice),
-        else => error.NotSupportedType,
-    };
+  if (T == []const u8) {
+    return slice;
+  }
+  return switch (@typeInfo(T)) {
+    .int => try std.fmt.parseInt(T, slice, 10),
+    .float => try std.fmt.parseFloat(T, slice),
+    else => error.NotSupportedType,
+  };
 }
