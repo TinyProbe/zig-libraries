@@ -201,7 +201,7 @@ pub fn Vec(comptime T: type) type {
         }
 
         pub fn clear(self: *Self) Allocator.Error!void {
-            try self.realloc(0);
+            try self.realloc(min_capacity);
             self.items.len = 0;
         }
 
