@@ -1,26 +1,12 @@
 const std = @import("std");
 const parseSlice = @import("./str.zig").parseSlice;
 
-pub var bufferedReader = std.io.bufferedReader(std.io.getStdIn().reader());
-pub var bufferedWriter = std.io.bufferedWriter(std.io.getStdOut().writer());
-
-fn readByte() ?u8 {
-    const reader = bufferedReader.reader();
-    const static = struct {
-        var buf: [1 << 12]u8 = undefined;
-        var len: usize = 0;
-        var cur: usize = 0;
-    };
-    if (static.cur == static.len) {
-        static.cur = 0;
-        static.len = reader.read(static.buf[0 .. static.buf.len]) catch {
-            @panic("readByte(): Error");
-        };
-        if (static.len == 0) { return null; }
-    }
-    defer static.cur += 1;
-    return static.buf[static.cur];
-}
+var cin_buf: [1 << 12]u8 = undefined;
+var cin_reader = std.fs.File.stdin().reader(&cin_buf);
+pub const cin = &cin_reader.interface;
+var cout_buf: [1 << 12]u8 = undefined;
+var cout_writer = std.fs.File.stdout().writer(&cout_buf);
+pub const cout = &cout_writer.interface;
 
 pub fn scan(comptime T: type) T {
     const static = struct {
@@ -28,13 +14,13 @@ pub fn scan(comptime T: type) T {
         var cur: usize = undefined;
     };
     static.cur = 0;
-    while (readByte()) |byte| {
+    while (cin.takeByte() catch null) |byte| {
         if (std.ascii.isWhitespace(byte)) { continue; }
         static.buf[static.cur] = byte;
         static.cur += 1;
         break;
     }
-    while (readByte()) |byte| {
+    while (cin.takeByte() catch null) |byte| {
         if (std.ascii.isWhitespace(byte)) { break; }
         static.buf[static.cur] = byte;
         static.cur += 1;
@@ -44,8 +30,7 @@ pub fn scan(comptime T: type) T {
     };
 }
 
-// need bufferedWriter.flush() explicitly in the execution flow.
+// need cout.flush() explicitly in the execution flow.
 pub fn print(comptime fmt: []const u8, args: anytype) void {
-    const writer = bufferedWriter.writer();
-    writer.print(fmt, args) catch @panic("print(): Error");
+    cout.print(fmt, args) catch @panic("print(): Error");
 }
