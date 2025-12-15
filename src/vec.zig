@@ -186,9 +186,8 @@ pub fn Vec(comptime T: type) type {
 
         pub fn removeRange(self: *Self, left: usize, right: usize) Allocator.Error!void {
             const width = right - left;
-            std.mem.copy(T,
-                self.items[left .. self.items.len - width],
-                self.items[right .. self.items.len]);
+            @memcpy(self.items[left .. self.items.len - width],
+                    self.items[right .. self.items.len]);
             try self.resize(self.items.len - width);
         }
 
