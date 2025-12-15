@@ -34,18 +34,18 @@ var gpa = std.heap.GeneralPurposeAllocator(.{}) {};
 const alloc = gpa.allocator();
 
 pub fn main() !void {
-  defer if (gpa.deinit() == .leak) unreachable;
-  defer zl.bufferedWriter.flush() catch unreachable;
+    defer if (gpa.deinit() == .leak) unreachable;
+    defer zl.bufferedWriter.flush() catch unreachable;
 
-  var s = zl.Str.init(alloc); defer s.deinit();
-  try s.appendSlice("hello world!");
-  zl.print("{s}\n", .{ s.items });
+    var s = zl.Str.init(alloc); defer s.deinit();
+    try s.appendSlice("hello world!");
+    zl.print("{s}\n", .{ s.items });
 
-  var v = zl.Vec(usize).init(alloc); defer v.deinit();
-  var rng = zl.Rng(usize).init(1, 101);
-  while (rng.next()) |i| {
-    try v.push(i);
-  }
-  zl.print("{d}\n", .{ v.items[10] });
+    var v = zl.Vec(usize).init(alloc); defer v.deinit();
+    var rng = zl.Rng(usize).init(1, 101);
+    while (rng.next()) |i| {
+        try v.push(i);
+    }
+    zl.print("{d}\n", .{ v.items[10] });
 }
 ```

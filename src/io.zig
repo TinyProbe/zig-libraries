@@ -2,10 +2,10 @@ const std = @import("std");
 const parseSlice = @import("./str.zig").parseSlice;
 
 var cin_buf: [1 << 12]u8 = undefined;
-var cin_reader = std.fs.File.stdin().reader(&cin_buf);
-pub const cin = &cin_reader.interface;
 var cout_buf: [1 << 12]u8 = undefined;
+var cin_reader = std.fs.File.stdin().reader(&cin_buf);
 var cout_writer = std.fs.File.stdout().writer(&cout_buf);
+pub const cin = &cin_reader.interface;
 pub const cout = &cout_writer.interface;
 
 pub fn scan(comptime T: type) T {
