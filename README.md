@@ -1,7 +1,7 @@
 # ✨ zig-libraries
 
 <p align="center">
-**Zig 언어를 위한 유틸리티, 자료구조, I/O 등을 포함하는 경량 라이브러리 모음입니다.**
+Zig 언어를 위한 유틸리티, 자료구조, I/O 등을 포함하는 경량 라이브러리 모음입니다.
 </p>
 
 ## 🚀 Getting Started
@@ -74,7 +74,7 @@ pub fn main() !void {
     defer v.deinit(); 
 
     // 3. 🔁 zl.rng.Rng: 인덱스 순회 반복자 (Range Iterator)
-    // 1부터 100까지 (101 미만) 순회
+    // 0부터 99까지 (100 미만) 순회
     var rng = zl.rng.Rng(usize).init(0, 100); 
     while (rng.next()) |i| {
         // 반복자를 통해 생성된 값을 Vec에 추가
