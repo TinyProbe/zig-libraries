@@ -31,7 +31,7 @@ pub fn Vec(comptime T: type) type {
 
         pub fn assignSlice(self: *Self, slice: []const T) Allocator.Error!void {
             if (isOverlaped(self.items, slice)) {
-                std.mem.copyForwards(T, self.items[0 .. slice.len], slice);
+                @memmove(self.items[0 .. slice.len], slice);
                 try self.resize(slice.len);
             } else {
                 try self.resize(slice.len);
@@ -64,7 +64,7 @@ pub fn Vec(comptime T: type) type {
 
         pub fn insertSlice(self: *Self, pos: usize, slice: []const T) Allocator.Error!void {
             self.resize(self.items.len + slice.len);
-            std.mem.copyBackwards(T,
+            @memmove(
                 self.items[pos + slice.len .. self.items.len],
                 self.items[pos .. self.items.len - slice.len]);
             self.replaceSlice(pos, slice);
@@ -72,7 +72,7 @@ pub fn Vec(comptime T: type) type {
 
         pub fn insertNTimes(self: *Self, pos: usize, n: usize, item: T) Allocator.Error!void {
             try self.resize(self.items.len + n);
-            std.mem.copyBackwards(T,
+            @memmove(
                 self.items[pos + n .. self.items.len],
                 self.items[pos .. self.items.len - n]);
             self.replaceNTimes(self.items.len - n, n, item);
@@ -83,7 +83,7 @@ pub fn Vec(comptime T: type) type {
         }
 
         pub fn replaceSlice(self: *Self, pos: usize, slice: []const T) void {
-            @memcpy(self.items[pos .. pos + slice.len], slice);
+            @memmove(self.items[pos .. pos + slice.len], slice);
         }
 
         pub fn replaceNTimes(self: Self, pos: usize, n: usize, item: T) void {
@@ -186,8 +186,9 @@ pub fn Vec(comptime T: type) type {
 
         pub fn removeRange(self: *Self, left: usize, right: usize) Allocator.Error!void {
             const width = right - left;
-            @memcpy(self.items[left .. self.items.len - width],
-                    self.items[right .. self.items.len]);
+            @memmove(
+                self.items[left .. self.items.len - width],
+                self.items[right .. self.items.len]);
             try self.resize(self.items.len - width);
         }
 
@@ -270,7 +271,7 @@ pub fn Vec(comptime T: type) type {
                 self.capacity = new_memory.len;
             } else {
                 const new_memory = try self.allocator.alloc(T, new_capacity);
-                @memcpy(new_memory[0 .. self.items.len], self.items);
+                @memmove(new_memory[0 .. self.items.len], self.items);
                 self.allocator.free(old_memory);
                 self.items.ptr = new_memory.ptr;
                 self.capacity = new_memory.len;
